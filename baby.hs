@@ -14,7 +14,7 @@ doubleSmallNumber x = if x > 100 then x else x * 2
 
 -- In case you're not sure about the type declaration of a function,
 -- use :t <func> in ghci
-replaceOdd :: (Ord a, Num a) => a -> [Char]
+replaceOdd :: (Ord a, Num a) => a -> String
 replaceOdd n = if n < 10 then "BOOM!" else "BANG!"
 
 -- 1. x is drawn from list xs

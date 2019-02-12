@@ -29,13 +29,13 @@ boomBangs xs = [ replaceOdd x | x <- xs, odd x ]
 -- of solutions and then you apply transformations to those solutions and
 -- filter them until you get the right ones.
 triangles =
-    [ (a, b, c)
-    | c <- [1 .. 10]
-    , a <- [1 .. c]
-    , b <- [1 .. a]
-    , a ^ 2 + b ^ 2 == c ^ 2
-    , a + b + c == 24
-    ]
+  [ (a, b, c)
+  | c <- [1 .. 10]
+  , a <- [1 .. c]
+  , b <- [1 .. a]
+  , a ^ 2 + b ^ 2 == c ^ 2
+  , a + b + c == 24
+  ]
 
 removeNonUppercase :: String -> String
 removeNonUppercase st = [ c | c <- st, c `elem` ['A' .. 'Z'] ]
@@ -98,9 +98,9 @@ bmiTell weight height | bmi <= skinny = "Gain some weight"
                       | bmi <= normal = "Stay there"
                       | bmi <= fat    = "Lose some weight"
                       | otherwise     = "There's no return"
-  where
-    bmi                   = weight / height ^ 2
-    (skinny, normal, fat) = (18.5, 25, 30)
+ where
+  bmi                   = weight / height ^ 2
+  (skinny, normal, fat) = (18.5, 25, 30)
 
 max' :: (Ord a) => a -> a -> a
 max' a b | a < b     = b
@@ -113,29 +113,29 @@ a `compare'` b | a > b     = GT
 
 initials :: String -> String -> String
 initials firstname lastname = [f] ++ ". " ++ [l] ++ "."
-  where
-    (f : _) = firstname
-    (l : _) = lastname
+ where
+  (f : _) = firstname
+  (l : _) = lastname
 
 -- `let` bindings are expressions themselves, while `where` bindings are
 -- just syntactic constructs, it cannot be used across guards
 cylinder :: (RealFloat a) => a -> a -> a
 cylinder r h =
-    let sideArea = 2 * pi * r * h
-        topArea  = pi * r ^ 2
-    in  sideArea + 2 * topArea
+  let sideArea = 2 * pi * r * h
+      topArea  = pi * r ^ 2
+  in  sideArea + 2 * topArea
 
 testLet1 = 4 * (let a = 9 in a + 1) + 2
 testLet2 = let square x = x * x in [square 5, square 3, square 2]
 testLet3 =
-    ( let a = 100
-          b = 200
-          c = 300
-      in  a * b * c
-    , let foo = "Hey "
-          bar = "there!"
-      in  foo ++ bar
-    )
+  ( let a = 100
+        b = 200
+        c = 300
+    in  a * b * c
+  , let foo = "Hey "
+        bar = "there!"
+    in  foo ++ bar
+  )
 
 -- Using pattern matching to assign multiple values at once in very handy
 -- let (a, b, c) = (100, 200, 300) in a+b+c
@@ -158,10 +158,10 @@ fatBmi xs = [ bmi | (w, h) <- xs, let bmi = w / h ^ 2, bmi >= 25.0 ]
 
 describeList :: [a] -> String
 describeList xs = "The list is " ++ what xs
-  where
-    what []  = "an empty list."
-    what [x] = "a singleton list."
-    what xs  = "a long list."
+ where
+  what []  = "an empty list."
+  what [x] = "a singleton list."
+  what xs  = "a long list."
 
 maximum' :: (Ord a) => [a] -> a
 maximum' []       = error "The list cannot be empty!"
@@ -212,12 +212,21 @@ elem' :: (Eq a) => a -> [a] -> Bool
 elem' x = foldl (\b y -> b || (x == y)) False
 -- elem' y ys = foldl (\acc x -> if x == y then True else acc) False ys
 
+testFold x xs = foldr
+  (\e (sml, bgl) -> if e < x then (e : sml, bgl) else (sml, e : bgl))
+  ([], [])
+  xs
+
 quicksort :: (Ord a) => [a] -> [a]
 quicksort []       = []
-quicksort (x : xs) = smallerList ++ [x] ++ biggerList
-  where
-    smallerList = let es = filter (<= x) xs in quicksort es
-    biggerList  = let es = filter (> x) xs in quicksort es
+quicksort (x : xs) = quicksort smallerList ++ [x] ++ quicksort biggerList
+ where
+  (smallerList, biggerList) = foldr
+    (\e (sml, bgl) -> if e < x then (e : sml, bgl) else (sml, e : bgl))
+    ([], [])
+    xs
+    -- smallerList = let es = filter (<= x) xs in quicksort es
+    -- biggerList  = let es = filter (> x) xs in quicksort es
     -- smallerList = quicksort [ e | e <- xs, e <= x ]
     -- biggerList  = quicksort [ e | e <- xs, e > x ]
 
@@ -258,7 +267,7 @@ flip' f x y = f y x
 --flip' f = \x y -> f y x
 
 largestDivisible =
-    let p x = x `mod` 3829 == 0 in head (filter p [100000, 99999 ..])
+  let p x = x `mod` 3829 == 0 in head (filter p [100000, 99999 ..])
 sumOddSquares = sum $ takeWhile (< 10000) $ map (^ 2) [1, 3 ..]
 
 collatzSequence :: Integer -> [Integer]
@@ -274,7 +283,7 @@ addThree = \x -> \y -> \z -> x + y + z
 
 lenMoreThan15 :: Int
 lenMoreThan15 =
-    length $ filter ((> 15) . length) $ map collatzSequence [1 .. 100]
+  length $ filter ((> 15) . length) $ map collatzSequence [1 .. 100]
 
 listOfFuncs = map (*) [0 ..]
 
@@ -290,7 +299,7 @@ filter' :: (a -> Bool) -> [a] -> [a]
 filter' p = foldr (\x acc -> if p x then x : acc else acc) []
 
 sumRootsUnder1000 =
-    (+1) $ length $ takeWhile (< 1000) $ scanl1 (+) $ map sqrt [1 ..]
+  (+ 1) $ length $ takeWhile (< 1000) $ scanl1 (+) $ map sqrt [1 ..]
 
 -- map function application over a list of partially applied functions
 -- WTF!!!
@@ -303,7 +312,12 @@ toNegative :: [Int] -> [Int]
 toNegative = map (negate . abs)
 
 -- chaining functions using composition
-complexExp = replicate 100 . product . map (* 3) . zipWith max [1, 2, 3, 4, 5] $ [4, 5, 6, 7, 8]
+complexExp =
+  replicate 100
+    . product
+    . map (* 3)
+    . zipWith max [1, 2, 3, 4, 5]
+    $ [4, 5, 6, 7, 8]
 
 -- point-free style function definition
 complexExp2 = ceiling . negate . tan . cos . max 50

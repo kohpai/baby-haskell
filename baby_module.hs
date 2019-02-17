@@ -94,21 +94,32 @@ decode :: Int -> String -> String
 -- decode key msg = map chr $ map (+ negate key) $ map ord msg
 decode key msg = encode (negate key) msg
 
+phoneBook =
+  [ ("betty"  , "555-2938")
+  , ("betty"  , "342-2492")
+  , ("bonnie" , "452-2928")
+  , ("patsy"  , "493-2928")
+  , ("patsy"  , "943-2929")
+  , ("patsy"  , "827-9162")
+  , ("lucille", "205-2928")
+  , ("wendy"  , "939-8282")
+  , ("penny"  , "853-2492")
+  , ("penny"  , "555-2111")
+  ]
 -- using head instead of [list] !! 0
 -- using snd instead of pattern matching
 findKey :: String -> Maybe String
 -- findKey key | null left = Nothing
 --             | otherwise = Just $ snd $ head left
-findKey key = foldl (\acc (k, v) -> if k == key then Just v else acc)
-                    Nothing
-                    phoneBook
- where
+findKey key =
+  foldl (\acc (k, v) -> if k == key then Just v else acc) Nothing phoneBook
   -- left = filter (\(k, _) -> k == key) phoneBook
-  phoneBook =
-    [ ("betty"  , "555-2938")
-    , ("bonnie" , "452-2928")
-    , ("patsy"  , "493-2928")
-    , ("lucille", "205-2928")
-    , ("wendy"  , "939-8282")
-    , ("penny"  , "853-2492")
-    ]
+
+fromList' :: Ord k => [(k, v)] -> Map.Map k v
+-- fromList' [(k, v)     ] = Map.insert k v Map.empty
+-- fromList' ((k, v) : xs) = Map.insert k v $ fromList' xs
+fromList' xs = foldl (\acc (k, v) -> Map.insert k v acc) Map.empty xs
+
+phoneBookToMap :: Ord k => [(k, v)] -> Map.Map k [v]
+phoneBookToMap xs =
+  Map.fromListWith (\[x] y -> x : y) $ map (\(k, v) -> (k, [v])) xs

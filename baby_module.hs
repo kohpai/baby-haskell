@@ -12,6 +12,7 @@ import           Data.Char
 -- import qualified Data.Function                 as DF
 -- import qualified Data.Char                     as DC
 import qualified Data.Map                      as Map
+import qualified Data.Set                      as Set
 
 -- nub takes out the duplicate elements
 numUniques :: (Eq a) => [a] -> Int
@@ -123,3 +124,14 @@ fromList' xs = foldl (\acc (k, v) -> Map.insert k v acc) Map.empty xs
 phoneBookToMap :: Ord k => [(k, v)] -> Map.Map k [v]
 phoneBookToMap xs =
   Map.fromListWith (\[x] y -> x : y) $ map (\(k, v) -> (k, [v])) xs
+
+-- weeding out duplicates for large lists is much faster if you cram them
+-- into a set and then convert them back to a list than using nub.
+sharedElems :: Ord a => [a] -> [a] -> Set.Set a
+sharedElems l1 l2 = Set.intersection set1 set2
+ where
+  set1 = Set.fromList l1
+  set2 = Set.fromList l2
+
+setNub :: Ord a => [a] -> [a]
+setNub xs = Set.toList $ Set.fromList xs

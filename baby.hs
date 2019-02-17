@@ -219,12 +219,14 @@ testFold x xs = foldr
 
 quicksort :: (Ord a) => [a] -> [a]
 quicksort []       = []
-quicksort (x : xs) = quicksort smallerList ++ [x] ++ quicksort biggerList
+quicksort (x : xs) = sortedSml ++ [x] ++ sortedBgl
  where
-  (smallerList, biggerList) = foldr
-    (\e (sml, bgl) -> if e < x then (e : sml, bgl) else (sml, e : bgl))
-    ([], [])
-    xs
+  (sortedSml, sortedBgl) =
+    let (smallerList, biggerList) = foldr
+          (\e (sml, bgl) -> if e < x then (e : sml, bgl) else (sml, e : bgl))
+          ([], [])
+          xs
+    in  (quicksort smallerList, quicksort biggerList)
     -- smallerList = let es = filter (<= x) xs in quicksort es
     -- biggerList  = let es = filter (> x) xs in quicksort es
     -- smallerList = quicksort [ e | e <- xs, e <= x ]
